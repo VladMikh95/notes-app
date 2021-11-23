@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">notes</string>
+    <string name="textLabelDayOfWeek">День недели:</string>
+    <string name="radio_button1">1</string>
+    <string name="radio_button2">2</string>
+    <string name="radio_button3">3</string>
+    <string name="edit_text_title_hint">Введите заголовок</string>
+    <string name="edit_text_description_hint">Введите описание</string>
+    <string name="button_create_note">Создать заметку</string>
+    <string name="text_click_element">clicked</string>
+    <string name="warning_fill_fields">Заполните все поля</string>
+    <string-array name="day_of_week">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресение</item>
+    </string-array>
+</resources>
