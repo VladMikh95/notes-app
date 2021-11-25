@@ -1,6 +1,7 @@
 package com.gamecodeschool.project.notes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.RoomDatabase;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -19,18 +20,14 @@ public class CreatorNoteActivity extends AppCompatActivity {
     private EditText editTextDescription;
     private Spinner spinnerDayOfWeek;
     private RadioGroup radioGroupPriority;
-    SQLiteDatabase database;
-    NotesDBHelper helper;
+    private NotesDatabase database;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creator_note);
-
-        helper = new NotesDBHelper(this);
-        database = helper.getWritableDatabase();
-
+        database = NotesDatabase.getInstance(this);
         editTextTitle = findViewById(R.id.editTextTextTitle);
         editTextDescription = findViewById(R.id.editTextTextDescription);
         spinnerDayOfWeek = findViewById(R.id.spinnerDayOfWeek);
@@ -46,12 +43,8 @@ public class CreatorNoteActivity extends AppCompatActivity {
         String priorityString = radioButton.getText().toString();
         int priority = Integer.parseInt(priorityString);
         if (isFilled(title, description)) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(NotesContract.NotesEntry.COLUMN_TITLE, title);
-            contentValues.put(NotesContract.NotesEntry.COLUMN_DESCRIPTION, description);
-            contentValues.put(NotesContract.NotesEntry.COLUMN_DAY_OF_WEEK, dayOfWeek);
-            contentValues.put(NotesContract.NotesEntry.COLUMN_PRIOTOTY, priority);
-            database.insert(NotesContract.NotesEntry.TABLE_NAME, null, contentValues);
+            Note note = new Note(title, description, dayOfWeek, priority);
+            database.mNotesDao().insertNote(note);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
