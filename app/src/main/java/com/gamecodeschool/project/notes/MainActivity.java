@@ -2,6 +2,10 @@ package com.gamecodeschool.project.notes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private final ArrayList<Note> notes = new ArrayList<>();
-    private NotesDatabase database;
     private NoteAdapter adapter;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        database = NotesDatabase.getInstance(this);
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         recyclerView = findViewById(R.id.recyclerView);
         adapter = new NoteAdapter(notes);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -71,16 +75,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void remove(int position) {
-        Note note = notes.get(position);
-        database.mNotesDao().deleteNote(note);
-        getData();
-        adapter.notifyDataSetChanged();
+        Note note = adapter.getNotes().get(position);
+        viewModel.deleteNote(note);
     }
 
     private void getData() {
-        List<Note> notesDB = database.mNotesDao().getAllNotes();
-        notes.clear();
-        notes.addAll(notesDB);
+        LiveData<List<Note>> notesDB = viewModel.getNotes();
+        notesDB.observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notesFromLiveData) {
+                adapter.setNotes(notesFromLiveData);
+            }
+        });
     }
 
 

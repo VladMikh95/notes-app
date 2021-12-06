@@ -1,6 +1,7 @@
 package com.gamecodeschool.project.notes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.room.RoomDatabase;
 
 import android.content.ContentValues;
@@ -20,14 +21,14 @@ public class CreatorNoteActivity extends AppCompatActivity {
     private EditText editTextDescription;
     private Spinner spinnerDayOfWeek;
     private RadioGroup radioGroupPriority;
-    private NotesDatabase database;
+    private MainViewModel viewModel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creator_note);
-        database = NotesDatabase.getInstance(this);
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         editTextTitle = findViewById(R.id.editTextTextTitle);
         editTextDescription = findViewById(R.id.editTextTextDescription);
         spinnerDayOfWeek = findViewById(R.id.spinnerDayOfWeek);
@@ -44,7 +45,7 @@ public class CreatorNoteActivity extends AppCompatActivity {
         int priority = Integer.parseInt(priorityString);
         if (isFilled(title, description)) {
             Note note = new Note(title, description, dayOfWeek, priority);
-            database.mNotesDao().insertNote(note);
+            viewModel.insertNote(note);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
